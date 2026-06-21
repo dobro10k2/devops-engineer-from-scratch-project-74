@@ -1,0 +1,12 @@
+# Системные файлы Git
+.git
+.gitignore
+
+# Логи
+npm-debug.log
+
+node_modules/
+dist/
+.env
+*.sqlite
+.npm/
