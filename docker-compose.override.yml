@@ -7,21 +7,19 @@ services:
       - ./app:/app
     ports:
       - "8080:8080"
-    env_file:
-      - .env
     environment:
-      - FASTIFY_ADDRESS=0.0.0.0
+      FASTIFY_ADDRESS: 0.0.0.0
     command: make dev
     depends_on:
       db:
         condition: service_healthy
 
   caddy:
-    image: caddy:latest
+    image: caddy:2-alpine
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./services/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./services/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
       - app
