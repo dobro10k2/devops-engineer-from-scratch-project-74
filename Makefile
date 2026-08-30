@@ -1,14 +1,24 @@
 UID := $(shell id -u)
 GID := $(shell id -g)
+# Extract the compose call into a variable for consistency (using the modern v2)
+DC := docker compose
 
 setup:
-	docker-compose run --rm -u $(UID):$(GID) app make setup
+	$(DC) run --rm -u $(UID):$(GID) app make setup
 
 dev:
-	docker-compose up
+	$(DC) up
 
 test:
-	docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+	$(DC) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
 
-ci:
-	docker compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+# Repository check (CI) now simply reuses the test target
+ci: test
+
+# Local check (running the linter from the application's internal Makefile)
+lint:
+	$(DC) run --rm app make lint
+
+# Environment cleanup (stopping containers and removing database volumes)
+clean:
+	$(DC) down -v

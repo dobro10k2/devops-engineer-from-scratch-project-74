@@ -7,4 +7,18 @@ services:
       - ./app:/app
     ports:
       - "8080:8080"
+    environment:
+      - FASTIFY_ADDRESS=0.0.0.0
+      - HOST=0.0.0.0
     command: make dev
+
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Пробрасываем наш конфиг внутрь контейнера по стандартному пути Caddy
+      - ./services/caddy/Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - app
