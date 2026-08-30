@@ -1,8 +1,7 @@
 services:
   app:
+    image: ghcr.io/dobro10k2/devops-engineer-from-scratch-project-74:latest
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./app:/app
+      dockerfile: Dockerfile.production
     command: make test
