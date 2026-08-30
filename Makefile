@@ -1,23 +1,25 @@
+.PHONY: prepare-env setup dev test ci lint clean
+
 UID := $(shell id -u)
 GID := $(shell id -g)
 DC := docker compose
 
-setup: prepare-env
+prepare-env:
+	cp -n .env.example .env
+
+setup:
 	$(DC) run --rm -u $(UID):$(GID) app make setup
 
-dev: prepare-env
+dev:
 	$(DC) up
 
-test: prepare-env
+test:
 	$(DC) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
 
-ci: test
+ci: prepare-env test
 
-lint: prepare-env
+lint:
 	$(DC) run --rm app make lint
 
 clean:
 	$(DC) down -v
-
-prepare-env:
-	@test -f .env || cp .env.example .env
