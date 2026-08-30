@@ -5,7 +5,7 @@ DC := docker compose
 .PHONY: prepare-env setup dev test ci lint clean
 
 prepare-env:
-	cp -n .env.example .env
+	@test -f .env || cp .env.example .env
 
 setup: prepare-env
 	$(DC) run --rm -u $(UID):$(GID) app make setup
@@ -14,7 +14,7 @@ dev: prepare-env
 	$(DC) up
 
 test: prepare-env
-	$(DC) -f docker-compose.yml up --abort-on-container-exit --exit-code-from app
+	$(DC) -f docker-compose.yml up --build --abort-on-container-exit --exit-code-from app
 
 ci: prepare-env test
 
@@ -22,4 +22,4 @@ lint: prepare-env
 	$(DC) run --rm app make lint
 
 clean:
-	$(DC) down -v
+	$(DC) down -v --remove-orphans
