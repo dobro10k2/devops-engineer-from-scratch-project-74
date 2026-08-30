@@ -1,22 +1,28 @@
 services:
   app:
-    image: ghcr.io/dobro10k2/devops-engineer-from-scratch-project-74:latest
     build:
       context: .
       dockerfile: Dockerfile.production
-    env_file:
-      - .env
+    image: ghcr.io/dobro10k2/devops-engineer-from-scratch-project-74:latest
     command: make test
+    environment:
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
     depends_on:
       db:
         condition: service_healthy
 
   db:
     image: postgres:latest
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
