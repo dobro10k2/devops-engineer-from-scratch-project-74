@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.production
+    env_file:
+      - .env
     command: make test
     depends_on:
       db:
